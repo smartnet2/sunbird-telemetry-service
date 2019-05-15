@@ -1,12 +1,15 @@
 const request = require('request');
 const async = require('async');
 
+// TODO: Make this efficient. Implementation to be similar to typesafe config. Right now one configuration holds 
+// together all supported transport configurations
+
 class PageService {
     constructor(pageConfig) {
         this.pageAssembleConfig = {};
         console.log('this.pageAssembleConfig', this.pageAssembleConfig);
         let instance = this;
-        pageConfig.result.page.forEach(function (page) {
+        pageConfig.result.page.forEach(function(page) {
             instance.pageAssembleConfig[page.name] = {
                 web: page.portalSections,
                 mobile: page.appSections
@@ -19,28 +22,29 @@ class PageService {
         const sections = this.pageAssembleConfig[name][source];
         let sectionCalls = [];
         let instance = this;
-        sections.forEach(function (section) {
-            sectionCalls.push(function (callback) {
+        sections.forEach(function(section) {
+            sectionCalls.push(function(callback) {
                 var options = instance.getHttpOptions('http://28.0.3.10:9000/v3/search', section.searchQuery, 'POST', {})
-                instance.sendRequest(options, function (error, response, body) {
-                    if (error) {
+                instance.sendRequest(options, function(error, response, body) {
+                    if(error) {
                         callback(error)
                     } else {
-                        section.contents = body.result.content;
+                        section.contents = response.result.content;
                         callback(null, section);
                     }
                 })
             });
         })
+        var instance = this;
         async.parallel(sectionCalls,
-            function (err, results) {
-                if (err) {
-                    instance.sendError(res, { id: 'api.page.assemble', params: { err: err } });
+            function(err, results) {
+                if(err) {
+                    instance.sendError(res, { id: 'api.page.assemble', params: { err: err }});
                 } else {
-                    instance.sendSuccess(res, { id: 'api.page.assemble', results: results, name: name });
+                    instance.sendSuccess(res, { id: 'api.page.assemble', results: results, name: name});
                 }
             }
-        );
+        ); 
     }
     sendError(res, options) {
         const resObj = {
@@ -68,22 +72,30 @@ class PageService {
         res.status(200);
         res.json(resObj);
     }
-    sendRequest(options, cb) {
-        request(options, function (error, response, body) {
+    sendRequest = function(options, cb) {
+        request(options, function(error, response, body) {
             cb(error, response, body);
         });
     }
-    getHttpOptions(url, data, method, headers) {
-        var defaultHeaders = { 'Content-Type': 'application/json' }
-
-        var http_options = { url: url, forever: true, headers: defaultHeaders, method: method, json: true }
-
-        if (headers) {
-            headers['Content-Type'] = headers['Content-Type'] ? headers['Content-Type'] : defaultHeaders['Content-Type']
-            headers['Authorization'] = defaultHeaders['Authorization']
-            http_options.headers = headers
+    getHttpOptions = function (url, data, method, headers) {
+        var defaultHeaders = {
+          'Content-Type': 'application/json'
         }
-
+      
+        var http_options = {
+          url: url,
+          forever: true,
+          headers: defaultHeaders,
+          method: method,
+          json: true
+        }
+      
+        if (headers) {
+          headers['Content-Type'] = headers['Content-Type'] ? headers['Content-Type'] : defaultHeaders['Content-Type']
+          headers['Authorization'] = defaultHeaders['Authorization']
+          http_options.headers = headers
+        }
+      
         if (data) { http_options.body = data }
         return http_options
     }
