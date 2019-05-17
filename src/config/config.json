@@ -1,0 +1,5 @@
+{
+    "API": {
+        "READ_CONTENT_URI": "content/v1/read/"
+    }
+}
