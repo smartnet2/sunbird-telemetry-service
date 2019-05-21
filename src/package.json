@@ -19,6 +19,7 @@
     "lodash": "^4.17.10",
     "morgan": "~1.9.0",
     "request": "2.87.0",
+    "restler": "^3.4.0",
     "uuid": "~3.2.1",
     "winston": "~2.4.3",
     "winston-cassandra": "~0.4.0",

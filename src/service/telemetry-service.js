@@ -1,6 +1,7 @@
 const uuidv1 = require('uuid/v1'),
     request = require('request'),
     DispatcherClass = require('../dispatcher/dispatcher').Dispatcher;
+    var rest = require('restler')
 config = require('../envVariables')
 var async = require('async');
 var urlConfig = require('./../config/config.json');
@@ -38,7 +39,7 @@ class TelemetryService {
         returnArray.push(param);
         eachCb(null);
       }
-    }, function (err) {
+    }, function (cb) {
       req.body.events = returnArray;
       message.did = req.get('x-device-id');
       message.channel = req.get('x-channel-id');
