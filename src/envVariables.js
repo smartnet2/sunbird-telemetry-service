@@ -18,7 +18,7 @@ const envVariables = {
     contactPoints: (process.env.telemetry_cassandra_contactpoints || 'localhost').split(','),
     cassandraTtl: process.env.telemetry_cassandra_ttl,
     port: process.env.telemetry_service_port || 9001,
-    baseUrl: process.env.sunbird_dataservice_url || 'https://nuis.ddns.net/api/',
+    baseUrl: process.env.sunbird_dataservice_url || 'https://testpwc.ddns.net/api/',
     threads: process.env.telemetry_service_threads || os.cpus().length
 }
 module.exports = envVariables;
