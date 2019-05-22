@@ -31,6 +31,7 @@ class TelemetryService {
           if (processedData && processedData.result) {
             //assign to param
             param.object.name = processedData.result.content.name;
+            param.object.code = processedData.result.content.board;
             returnArray.push(param);
             return eachCb(null);
           }
